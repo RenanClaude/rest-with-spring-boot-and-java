@@ -20,7 +20,7 @@ import com.webdevelopment.data.vo.v2.PersonVOV2;
 import com.webdevelopment.services.PersonServices;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/person/v1")
 public class PersonController {
 
 //	private final AtomicLong counter = new AtomicLong();
