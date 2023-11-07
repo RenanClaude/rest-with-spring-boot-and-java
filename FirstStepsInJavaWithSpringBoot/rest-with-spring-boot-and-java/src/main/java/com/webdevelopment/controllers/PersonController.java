@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.webdevelopment.data.vo.v1.PersonVO;
 import com.webdevelopment.data.vo.v2.PersonVOV2;
 import com.webdevelopment.services.PersonServices;
+import com.webdevelopment.util.MediaType;
 
 @RestController
-@RequestMapping("/person/v1")
+@RequestMapping("/api/person/v1")
 public class PersonController {
 
 //	private final AtomicLong counter = new AtomicLong();
@@ -32,7 +32,8 @@ public class PersonController {
 		this.personServices = personServices;
 	}
 
-	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/{id}", produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML })
 	public ResponseEntity<PersonVO> findById(@PathVariable(value = "id") Long id) {
 		PersonVO person = this.personServices.findById(id);
 
@@ -40,7 +41,7 @@ public class PersonController {
 
 	}
 
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML })
 	public ResponseEntity<List<PersonVO>> findAll() {
 		List<PersonVO> persons = this.personServices.findAll();
 
@@ -48,21 +49,26 @@ public class PersonController {
 
 	}
 
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML }, consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+					MediaType.APPLICATION_YML })
 	public ResponseEntity<PersonVO> create(@RequestBody PersonVO person) {
 		PersonVO createdPerson = this.personServices.create(person);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
 	}
 
-	@PostMapping(value = "/v2", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/v2", produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+			MediaType.APPLICATION_YML }, consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+					MediaType.APPLICATION_YML })
 	public ResponseEntity<PersonVOV2> createV2(@RequestBody PersonVOV2 person) {
 		PersonVOV2 createdPerson = this.personServices.createV2(person);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
 	}
 
-	@PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML }, consumes = {
+			MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML })
 	public ResponseEntity<PersonVO> update(@RequestBody PersonVO person) {
 		PersonVO updatedPerson = this.personServices.update(person);
 
