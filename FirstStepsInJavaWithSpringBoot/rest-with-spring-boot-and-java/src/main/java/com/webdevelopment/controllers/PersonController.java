@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.webdevelopment.data.vo.v1.PersonVO;
-import com.webdevelopment.data.vo.v2.PersonVOV2;
 import com.webdevelopment.services.PersonServices;
 import com.webdevelopment.util.MediaType;
 
@@ -58,17 +57,9 @@ public class PersonController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
 	}
 
-	@PostMapping(value = "/v2", produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
+	@PutMapping(produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
 			MediaType.APPLICATION_YML }, consumes = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,
 					MediaType.APPLICATION_YML })
-	public ResponseEntity<PersonVOV2> createV2(@RequestBody PersonVOV2 person) {
-		PersonVOV2 createdPerson = this.personServices.createV2(person);
-
-		return ResponseEntity.status(HttpStatus.CREATED).body(createdPerson);
-	}
-
-	@PutMapping(produces = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML }, consumes = {
-			MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML, MediaType.APPLICATION_YML })
 	public ResponseEntity<PersonVO> update(@RequestBody PersonVO person) {
 		PersonVO updatedPerson = this.personServices.update(person);
 

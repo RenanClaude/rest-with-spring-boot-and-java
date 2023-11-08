@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.webdevelopment.data.vo.v2.PersonVOV2;
 import com.webdevelopment.model.entity.Person;
 
+// Manual Converter
 @Service
 public class PersonMapper {
 
