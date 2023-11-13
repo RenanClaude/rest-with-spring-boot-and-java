@@ -1,5 +1,5 @@
 cors:
-  originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br
+  originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br,https://erudito.com.br
 spring:
   datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
