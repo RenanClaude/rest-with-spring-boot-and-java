@@ -1,4 +1,4 @@
-package com.webdevelopment.securityJwt;
+package com.webdevelopment.security.jwt;
 
 import java.util.Base64;
 import java.util.Date;
@@ -34,7 +34,7 @@ public class JwtTokenProvider {
 	@Value("${security.jwt.token.secret-key:secret}")
 	private String secretKey = "secret";
 
-	@Value("${security.jwt.token.expire-lenght:3600000}")
+	@Value("${security.jwt.token.expire-length:3600000}")
 	private long validityInMilliseconds = 3600000; // 1h
 
 	private UserDetailsService userDetailsService;
@@ -56,18 +56,17 @@ public class JwtTokenProvider {
 		var refreshToken = getRefreshToken(username, roles, now);
 
 		return new TokenVO(username, true, now, validity, accessToken, refreshToken);
-
-//		return JWT.create().withIssuer("Agrix").withSubject(person.getUsername())
-//				.withExpiresAt(generateExpirationDate()).sign(algorithm);
 	}
 
 	private String getAccessToken(String username, List<String> roles, Date now, Date validity) {
 
-//		Retorna a URL do servidor
 		String issuerURL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
 
 		return JWT.create().withClaim("roles", roles).withIssuedAt(now).withIssuer(issuerURL).withSubject(username)
 				.withExpiresAt(validity).sign(algorithm).strip();
+		
+//		return JWT.create().withIssuer("Agrix").withSubject(person.getUsername())
+//		.withExpiresAt(generateExpirationDate()).sign(algorithm);
 	}
 
 	private String getRefreshToken(String username, List<String> roles, Date now) {
@@ -76,6 +75,9 @@ public class JwtTokenProvider {
 
 		return JWT.create().withClaim("roles", roles).withIssuedAt(now).withSubject(username)
 				.withExpiresAt(validityRefreshToken).sign(algorithm).strip();
+		
+//		return JWT.create().withIssuer("Agrix").withSubject(person.getUsername())
+//		.withExpiresAt(generateExpirationDate()).sign(algorithm);
 	}
 
 	public Authentication getAuthentication(String token) {
