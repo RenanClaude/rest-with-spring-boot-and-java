@@ -26,11 +26,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class JwtTokenProvider {
 
-	@Autowired
-	public JwtTokenProvider(UserDetailsService userDetailsService) {
-		this.userDetailsService = userDetailsService;
-	}
-
 	@Value("${security.jwt.token.secret-key:secret}")
 	private String secretKey = "secret";
 
@@ -40,6 +35,11 @@ public class JwtTokenProvider {
 	private UserDetailsService userDetailsService;
 
 	private Algorithm algorithm = null;
+
+	@Autowired
+	public JwtTokenProvider(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
 
 	@PostConstruct
 	protected void init() {
@@ -64,7 +64,7 @@ public class JwtTokenProvider {
 
 		return JWT.create().withClaim("roles", roles).withIssuedAt(now).withIssuer(issuerURL).withSubject(username)
 				.withExpiresAt(validity).sign(algorithm).strip();
-		
+
 //		return JWT.create().withIssuer("Agrix").withSubject(person.getUsername())
 //		.withExpiresAt(generateExpirationDate()).sign(algorithm);
 	}
@@ -75,7 +75,7 @@ public class JwtTokenProvider {
 
 		return JWT.create().withClaim("roles", roles).withIssuedAt(now).withSubject(username)
 				.withExpiresAt(validityRefreshToken).sign(algorithm).strip();
-		
+
 //		return JWT.create().withIssuer("Agrix").withSubject(person.getUsername())
 //		.withExpiresAt(generateExpirationDate()).sign(algorithm);
 	}
@@ -85,7 +85,7 @@ public class JwtTokenProvider {
 		DecodedJWT decodedJWT = DecodedToken(token);
 
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(decodedJWT.getSubject());
-
+		
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 

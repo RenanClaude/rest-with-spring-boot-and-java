@@ -29,11 +29,13 @@ public class AuthServices {
 	public ResponseEntity<TokenVO> signin(AccountCredentialsVO data) {
 
 		try {
-
 			var username = data.getUsername();
 			var password = data.getPassword();
 
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+			UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(username, password);
+
+			authenticationManager.authenticate(usernamePassword);
+
 			var user = repository.findByUsername(username);
 			var tokenResponse = new TokenVO();
 
