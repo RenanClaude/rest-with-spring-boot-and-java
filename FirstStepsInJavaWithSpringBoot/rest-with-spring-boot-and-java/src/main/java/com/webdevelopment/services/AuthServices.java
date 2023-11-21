@@ -32,7 +32,8 @@ public class AuthServices {
 			var username = data.getUsername();
 			var password = data.getPassword();
 
-			UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(username, password);
+			UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(username,
+					password);
 
 			authenticationManager.authenticate(usernamePassword);
 
@@ -53,4 +54,16 @@ public class AuthServices {
 		}
 	}
 
+	public ResponseEntity<TokenVO> refreshToken(String username, String refreshToken) {
+		var user = repository.findByUsername(username);
+		var tokenResponse = new TokenVO();
+
+		if (user != null) {
+			tokenResponse = this.tokenProvider.refreshToken(refreshToken);
+
+		} else {
+			throw new UsernameNotFoundException("Username " + username + " not found!");
+		}
+		return ResponseEntity.ok(tokenResponse);
+	}
 }
