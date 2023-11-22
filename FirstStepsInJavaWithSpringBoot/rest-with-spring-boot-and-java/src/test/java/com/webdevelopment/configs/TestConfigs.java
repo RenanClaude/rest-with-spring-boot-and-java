@@ -5,7 +5,7 @@ public class TestConfigs {
 	// Porta padrão que o rest-assured irá utilizar para se conectar aos testes
 	public static final int SERVER_PORT = 8888;
 	
-	public static final String HEADER_PARAM_ORIGIN_AUTHORIZATION = "Authorization";
+	public static final String HEADER_PARAM_AUTHORIZATION = "Authorization";
 	
 	public static final String HEADER_PARAM_ORIGIN = "Origin";
 	
