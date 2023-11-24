@@ -56,8 +56,6 @@ public class PersonServices {
 		
 		logger.info("Creating one person");
 		
-		System.out.println("AQUI: " + personVO);
-
 		Person person = DozerMapper.parseObject(personVO, Person.class);
 		Person personCreated = repository.save(person);
 		PersonVO resPersonVO = DozerMapper.parseObject(personCreated, PersonVO.class);

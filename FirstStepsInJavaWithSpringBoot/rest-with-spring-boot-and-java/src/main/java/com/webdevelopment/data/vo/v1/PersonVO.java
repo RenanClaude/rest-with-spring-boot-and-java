@@ -93,11 +93,11 @@ public class PersonVO extends RepresentationModel<PersonVO> implements Serializa
 		return Objects.equals(key, other.key);
 	}
 
-	@Override
-	public String toString() {
-		return "PersonVO [key=" + key + ", firstName=" + firstName + ", lastName=" + lastName + ", address=" + address
-				+ ", gender=" + gender + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "PersonVO [key=" + key + ", firstName=" + firstName + ", lastName=" + lastName + ", address=" + address
+//				+ ", gender=" + gender + "]";
+//	}
 	
 	
 
