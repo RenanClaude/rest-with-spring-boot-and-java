@@ -1,0 +1,2 @@
+﻿update users set password = '$2a$12$fftxofyZNee33rvuq5cxt.EIlLFiqnY5HUBDKN4sebybAtuAiUPtK' where id in (2);
+update users set password = '$2a$12$2Li8x8npUQlTzwGHvrZTnOlWRrqciUINFz2ygOyQiVk5bdkyEvoYu' where id in (1);

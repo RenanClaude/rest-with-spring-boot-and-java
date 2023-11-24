@@ -55,6 +55,8 @@ public class PersonServices {
 		if (personVO == null) throw new RequiredObjectIsNullException();
 		
 		logger.info("Creating one person");
+		
+		System.out.println("AQUI: " + personVO);
 
 		Person person = DozerMapper.parseObject(personVO, Person.class);
 		Person personCreated = repository.save(person);
