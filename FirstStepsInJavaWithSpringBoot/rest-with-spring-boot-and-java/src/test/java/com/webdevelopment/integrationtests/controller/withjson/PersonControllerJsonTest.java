@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -155,6 +158,78 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertEquals("Male", persistedPerson.getGender());
 	}
 
+	@Test
+	@Order(4)
+	public void testDelete() throws JsonMappingException, JsonProcessingException {
+
+				given()
+				.spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.pathParam("id", person.getId()).when()
+				.delete("{id}").then().statusCode(204);
+	}
+	
+	@Test
+	@Order(5)
+	public void testFindAll() throws JsonMappingException, JsonProcessingException {
+
+		var content = given()
+				.spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.when().get()
+				.then().statusCode(200).extract().body()
+				.asString();
+//				.as(new TypeRef<List<PersonVO>>() {});
+		
+		List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {});
+
+		PersonVO firstPersonOnTheList = people.get(0);
+
+		assertNotNull(firstPersonOnTheList.getId());
+		assertNotNull(firstPersonOnTheList.getFirstName());
+		assertNotNull(firstPersonOnTheList.getLastName());
+		assertNotNull(firstPersonOnTheList.getAddress());
+		assertNotNull(firstPersonOnTheList.getGender());
+
+		assertEquals(1, firstPersonOnTheList.getId());
+
+		assertEquals("Ayrton", firstPersonOnTheList.getFirstName());
+		assertEquals("Senna", firstPersonOnTheList.getLastName());
+		assertEquals("São Paulo", firstPersonOnTheList.getAddress());
+		assertEquals("Male", firstPersonOnTheList.getGender());
+		
+		PersonVO sixthPersonOnTheList = people.get(5);
+
+		assertNotNull(sixthPersonOnTheList.getId());
+		assertNotNull(sixthPersonOnTheList.getFirstName());
+		assertNotNull(sixthPersonOnTheList.getLastName());
+		assertNotNull(sixthPersonOnTheList.getAddress());
+		assertNotNull(sixthPersonOnTheList.getGender());
+
+		assertEquals(9, sixthPersonOnTheList.getId());
+
+		assertEquals("Nelson", sixthPersonOnTheList.getFirstName());
+		assertEquals("Mvezo", sixthPersonOnTheList.getLastName());
+		assertEquals("Mvezo – South Africa", sixthPersonOnTheList.getAddress());
+		assertEquals("Male", sixthPersonOnTheList.getGender());
+	}
+	
+	@Test
+	@Order(6)
+	public void testFindAllWithoutToken() throws JsonMappingException, JsonProcessingException {
+
+		RequestSpecification specificationWithoutToken = new RequestSpecBuilder()
+				.setBasePath("/api/person/v1").setPort(TestConfigs.SERVER_PORT)
+				.addFilter(new RequestLoggingFilter(LogDetail.ALL)).addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+				.build();
+		
+				given()
+				.spec(specificationWithoutToken)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.when().get()
+				.then().statusCode(403);
+	}
+	
 	private void mockPerson() {
 		person.setFirstName("Nelson");
 		person.setLastName("Piquet");
