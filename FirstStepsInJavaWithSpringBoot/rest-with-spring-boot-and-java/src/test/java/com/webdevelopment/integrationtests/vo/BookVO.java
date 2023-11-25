@@ -1,4 +1,4 @@
-package com.webdevelopment.data.vo.v1;
+package com.webdevelopment.integrationtests.vo;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -6,18 +6,14 @@ import java.util.Objects;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.dozermapper.core.Mapping;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
-@JsonPropertyOrder({ "id", "title", "author", "launchDate", "price" })
+@XmlRootElement
 public class BookVO extends RepresentationModel<BookVO> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Mapping("id")
-	@JsonProperty("id")
-	private Long key;
+	private Long id;
 	private String title;
 	private String author;
 	private Date launchDate;
@@ -26,20 +22,20 @@ public class BookVO extends RepresentationModel<BookVO> implements Serializable 
 	public BookVO() {
 	}
 
-	public BookVO(Long key, String title, String author, Date launchDate, Double price) {
-		this.key = key;
+	public BookVO(Long id, String title, String author, Date launchDate, Double price) {
+		this.id = id;
 		this.title = title;
 		this.author = author;
 		this.launchDate = launchDate;
 		this.price = price;
 	}
 
-	public Long getKey() {
-		return key;
+	public Long getId() {
+		return id;
 	}
 
-	public void setKey(Long key) {
-		this.key = key;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getTitle() {
@@ -76,7 +72,7 @@ public class BookVO extends RepresentationModel<BookVO> implements Serializable 
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(key);
+		return Objects.hash(id);
 	}
 
 	@Override
@@ -88,7 +84,7 @@ public class BookVO extends RepresentationModel<BookVO> implements Serializable 
 		if (getClass() != obj.getClass())
 			return false;
 		BookVO other = (BookVO) obj;
-		return Objects.equals(key, other.key);
+		return Objects.equals(id, other.id);
 	}
 
 }
