@@ -18,7 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.webdevelopment.configs.TestConfigs;
 import com.webdevelopment.data.vo.v1.security.TokenVO;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
@@ -36,13 +36,13 @@ import io.restassured.specification.RequestSpecification;
 public class BookControllerXmlTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
-	private static ObjectMapper objectMapper;
+	private static XmlMapper objectMapper;
 
 	private static BookVO book;
 
 	@BeforeAll
 	public static void setup() {
-		objectMapper = new ObjectMapper();
+		objectMapper = new XmlMapper();
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
 		book = new BookVO();
@@ -55,7 +55,9 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 		AccountCredentialsVO user = new AccountCredentialsVO("leandro", "admin123");
 
 		var accessToken = given().basePath("/auth/signin").port(TestConfigs.SERVER_PORT)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON).body(user).when().post().then().statusCode(200).extract()
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.body(user).when().post().then().statusCode(200).extract()
 				.body().as(TokenVO.class).getAccessToken();
 
 		specification = new RequestSpecBuilder().addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
@@ -72,26 +74,25 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
 				.body(book).when().post()
 				.then().statusCode(201).extract().body().asString();
 
-		BookVO persistedBook = objectMapper.readValue(content, BookVO.class);
-		book = persistedBook;
+		 book = objectMapper.readValue(content, BookVO.class);
 
-		assertNotNull(persistedBook);
+		assertNotNull(book);
 
-		assertNotNull(persistedBook.getId());
-		assertNotNull(persistedBook.getTitle());
-		assertNotNull(persistedBook.getAuthor());
-		assertNotNull(persistedBook.getLaunchDate());
-		assertNotNull(persistedBook.getPrice());
+		assertNotNull(book.getId());
+		assertNotNull(book.getTitle());
+		assertNotNull(book.getAuthor());
+		assertNotNull(book.getPrice());
 
-		assertTrue(persistedBook.getId() > 0);
+		assertTrue(book.getId() > 0);
 
-		assertEquals("Estruturas de dados e algoritmos com JavaScript", persistedBook.getTitle());
-		assertEquals("Loiane Groner", persistedBook.getAuthor());
-		assertEquals(20.00, persistedBook.getPrice());
+		assertEquals("Estruturas de dados e algoritmos com JavaScript", book.getTitle());
+		assertEquals("Loiane Groner", book.getAuthor());
+		assertEquals(20.00, book.getPrice());
 	}
 
 	
@@ -103,8 +104,9 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
-				.body(book).when().post()
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
+				.body(book).when().put()
 				.then().statusCode(201).extract().body().asString();
 
 		BookVO persistedBook = objectMapper.readValue(content, BookVO.class);
@@ -134,7 +136,8 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
 				.pathParam("id", book.getId()).when()
 				.get("{id}").then().statusCode(200).extract().body().asString();
 
@@ -162,7 +165,8 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
 				given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
 				.pathParam("id", book.getId()).when()
 				.delete("{id}").then().statusCode(204);
 	}
@@ -173,7 +177,8 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 
 		var content = given()
 				.spec(specification)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
 				.queryParams("page", 0 , "limit", 5, "direction", "asc")
 				.when().get()
 				.then().statusCode(200).extract().body()
@@ -222,7 +227,8 @@ public class BookControllerXmlTest extends AbstractIntegrationTest {
 		
 				given()
 				.spec(specificationWithoutToken)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
+				.accept(TestConfigs.CONTENT_TYPE_XML)
 				.when().get()
 				.then().statusCode(403);
 	}

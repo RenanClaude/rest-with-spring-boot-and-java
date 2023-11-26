@@ -61,6 +61,7 @@ public class BookServices {
 		Book bookCreated = repository.save(book);
 		BookVO resBookVO = DozerMapper.parseObject(bookCreated, BookVO.class);
 		resBookVO.add(linkTo(methodOn(BookController.class).findById(resBookVO.getKey())).withSelfRel());
+		
 		return resBookVO;
 	}
 
