@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +22,7 @@ import com.webdevelopment.data.vo.v1.security.TokenVO;
 import com.webdevelopment.integrationtests.controller.withyaml.mapper.YmlMapper;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.webdevelopment.integrationtests.vo.AccountCredentialsVO;
-import com.webdevelopment.integrationtests.vo.PersonVO;
+import com.webdevelopment.integrationtests.vo.BookVO;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -34,17 +35,17 @@ import io.restassured.specification.RequestSpecification;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(org.junit.jupiter.api.MethodOrderer.OrderAnnotation.class)
-public class PersonControllerYamlTest extends AbstractIntegrationTest {
+public class BookControllerYamlTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static YmlMapper objectMapper;
-	private static PersonVO person;
+	private static BookVO book;
 
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new YmlMapper();
 
-		person = new PersonVO();
+		book = new BookVO();
 
 	}
 
@@ -68,7 +69,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.body().as(TokenVO.class, objectMapper).getAccessToken();
 
 		specification = new RequestSpecBuilder().addHeader(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-				.setBasePath("/api/person/v1").setPort(TestConfigs.SERVER_PORT)
+				.setBasePath("/api/book/v1").setPort(TestConfigs.SERVER_PORT)
 				.addFilter(new RequestLoggingFilter(LogDetail.ALL)).addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 				.build();
 	}
@@ -77,9 +78,9 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	@Order(1)
 	public void testCreate() throws JsonMappingException, JsonProcessingException {
 
-		mockPerson();
+		mockBook();
 
-		var persistedPerson = given()
+		var persistedBook = given()
 				.spec(specification)
 				.config(
 	                    RestAssuredConfig
@@ -90,25 +91,23 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	                                ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-				.body(person, objectMapper).when().post()
-				.then().statusCode(201).extract().body().as(PersonVO.class, objectMapper);
+				.body(book, objectMapper).when().post()
+				.then().statusCode(201).extract().body().as(BookVO.class, objectMapper);
 
-		person = persistedPerson;
+		 book = persistedBook;
 
-		assertNotNull(persistedPerson);
+		assertNotNull(book);
 
-		assertNotNull(persistedPerson.getId());
-		assertNotNull(persistedPerson.getFirstName());
-		assertNotNull(persistedPerson.getLastName());
-		assertNotNull(persistedPerson.getAddress());
-		assertNotNull(persistedPerson.getGender());
+		assertNotNull(book.getId());
+		assertNotNull(book.getTitle());
+		assertNotNull(book.getAuthor());
+		assertNotNull(book.getPrice());
 
-		assertTrue(persistedPerson.getId() > 0);
+		assertTrue(book.getId() > 0);
 
-		assertEquals("Nelson", persistedPerson.getFirstName());
-		assertEquals("Piquet", persistedPerson.getLastName());
-		assertEquals("Brasília - DF - Brasil", persistedPerson.getAddress());
-		assertEquals("Male", persistedPerson.getGender());
+		assertEquals("Estruturas de dados e algoritmos com JavaScript", book.getTitle());
+		assertEquals("Loiane Groner", book.getAuthor());
+		assertEquals(20.00, book.getPrice());
 	}
 
 	
@@ -116,9 +115,9 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	@Order(2)
 	public void testUpdate() throws JsonMappingException, JsonProcessingException {
 
-		person.setLastName("Piquet Souto Maior");
+		book.setPrice(30.00);
 
-		var persistedPerson = given()
+		var persistedBook = given()
 				.spec(specification)
 				.config(
 	                    RestAssuredConfig
@@ -129,25 +128,24 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	                                ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-				.body(person, objectMapper).when().post()
-				.then().statusCode(201).extract().body().as(PersonVO.class, objectMapper);
+				.body(book, objectMapper).when().put()
+				.then().statusCode(201).extract().body().as(BookVO.class, objectMapper);
 
-		person = persistedPerson;
+		book = persistedBook;
 
-		assertNotNull(persistedPerson);
+		assertNotNull(persistedBook);
 
-		assertNotNull(persistedPerson.getId());
-		assertNotNull(persistedPerson.getFirstName());
-		assertNotNull(persistedPerson.getLastName());
-		assertNotNull(persistedPerson.getAddress());
-		assertNotNull(persistedPerson.getGender());
+		assertNotNull(persistedBook.getId());
+		assertNotNull(persistedBook.getTitle());
+		assertNotNull(persistedBook.getAuthor());
+		assertNotNull(persistedBook.getLaunchDate());
+		assertNotNull(persistedBook.getPrice());
 
-		assertEquals(person.getId(), persistedPerson.getId());
+		assertEquals(book.getId(), persistedBook.getId());
 
-		assertEquals("Nelson", persistedPerson.getFirstName());
-		assertEquals("Piquet Souto Maior", persistedPerson.getLastName());
-		assertEquals("Brasília - DF - Brasil", persistedPerson.getAddress());
-		assertEquals("Male", persistedPerson.getGender());
+		assertEquals("Estruturas de dados e algoritmos com JavaScript", persistedBook.getTitle());
+		assertEquals("Loiane Groner", persistedBook.getAuthor());
+		assertEquals(30.00, persistedBook.getPrice());
 	}
 	
 
@@ -155,9 +153,9 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	@Order(3)
 	public void testFindById() throws JsonMappingException, JsonProcessingException {
 
-		mockPerson();
+		mockBook();
 
-		var persistedPerson = given()
+		var persistedBook = given()
 				.spec(specification)
 				.config(
 	                    RestAssuredConfig
@@ -168,25 +166,24 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	                                ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-				.pathParam("id", person.getId()).when()
-				.get("{id}").then().statusCode(200).extract().body().as(PersonVO.class, objectMapper);
+				.pathParam("id", book.getId()).when()
+				.get("{id}").then().statusCode(200).extract().body().as(BookVO.class, objectMapper);
 
-		person = persistedPerson;
+		book = persistedBook;
 
-		assertNotNull(persistedPerson);
+		assertNotNull(persistedBook);
 
-		assertNotNull(persistedPerson.getId());
-		assertNotNull(persistedPerson.getFirstName());
-		assertNotNull(persistedPerson.getLastName());
-		assertNotNull(persistedPerson.getAddress());
-		assertNotNull(persistedPerson.getGender());
+		assertNotNull(persistedBook.getId());
+		assertNotNull(persistedBook.getTitle());
+		assertNotNull(persistedBook.getAuthor());
+		assertNotNull(persistedBook.getLaunchDate());
+		assertNotNull(persistedBook.getPrice());
 
-		assertEquals(person.getId(), persistedPerson.getId());
+		assertEquals(book.getId(), persistedBook.getId());
 
-		assertEquals("Nelson", persistedPerson.getFirstName());
-		assertEquals("Piquet Souto Maior", persistedPerson.getLastName());
-		assertEquals("Brasília - DF - Brasil", persistedPerson.getAddress());
-		assertEquals("Male", persistedPerson.getGender());
+		assertEquals("Estruturas de dados e algoritmos com JavaScript", persistedBook.getTitle());
+		assertEquals("Loiane Groner", persistedBook.getAuthor());
+		assertEquals(30.00, persistedBook.getPrice());
 	}
 
 	@Test
@@ -204,7 +201,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	                                ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
-				.pathParam("id", person.getId()).when()
+				.pathParam("id", book.getId()).when()
 				.delete("{id}").then().statusCode(204);
 	}
 	
@@ -225,39 +222,37 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.accept(TestConfigs.CONTENT_TYPE_YML)
 				.when().get()
 				.then().statusCode(200).extract().body()
-				.as(PersonVO[].class, objectMapper);
+				.as(BookVO[].class, objectMapper);
 		
-		List<PersonVO> people = Arrays.asList(content);
+		List<BookVO> books = Arrays.asList(content);
 
-		PersonVO firstPersonOnTheList = people.get(0);
+		BookVO firstBookOnTheList = books.get(0);
 
-		assertNotNull(firstPersonOnTheList.getId());
-		assertNotNull(firstPersonOnTheList.getFirstName());
-		assertNotNull(firstPersonOnTheList.getLastName());
-		assertNotNull(firstPersonOnTheList.getAddress());
-		assertNotNull(firstPersonOnTheList.getGender());
+		assertNotNull(firstBookOnTheList.getId());
+		assertNotNull(firstBookOnTheList.getTitle());
+		assertNotNull(firstBookOnTheList.getAuthor());
+		assertNotNull(firstBookOnTheList.getLaunchDate());
+		assertNotNull(firstBookOnTheList.getPrice());
 
-		assertEquals(1, firstPersonOnTheList.getId());
+		assertEquals(1, firstBookOnTheList.getId());
 
-		assertEquals("Ayrton", firstPersonOnTheList.getFirstName());
-		assertEquals("Senna", firstPersonOnTheList.getLastName());
-		assertEquals("São Paulo", firstPersonOnTheList.getAddress());
-		assertEquals("Male", firstPersonOnTheList.getGender());
+		assertEquals("Working effectively with legacy code", firstBookOnTheList.getTitle());
+		assertEquals("Michael C. Feathers", firstBookOnTheList.getAuthor());
+		assertEquals(49.00, firstBookOnTheList.getPrice());
 		
-		PersonVO sixthPersonOnTheList = people.get(5);
+		BookVO sixthBookOnTheList = books.get(5);
 
-		assertNotNull(sixthPersonOnTheList.getId());
-		assertNotNull(sixthPersonOnTheList.getFirstName());
-		assertNotNull(sixthPersonOnTheList.getLastName());
-		assertNotNull(sixthPersonOnTheList.getAddress());
-		assertNotNull(sixthPersonOnTheList.getGender());
+		assertNotNull(sixthBookOnTheList.getId());
+		assertNotNull(sixthBookOnTheList.getTitle());
+		assertNotNull(sixthBookOnTheList.getAuthor());
+		assertNotNull(sixthBookOnTheList.getLaunchDate());
+		assertNotNull(sixthBookOnTheList.getPrice());
 
-		assertEquals(9, sixthPersonOnTheList.getId());
+		assertEquals(6, sixthBookOnTheList.getId());
 
-		assertEquals("Nelson", sixthPersonOnTheList.getFirstName());
-		assertEquals("Mvezo", sixthPersonOnTheList.getLastName());
-		assertEquals("Mvezo – South Africa", sixthPersonOnTheList.getAddress());
-		assertEquals("Male", sixthPersonOnTheList.getGender());
+		assertEquals("Refactoring", sixthBookOnTheList.getTitle());
+		assertEquals("Martin Fowler e Kent Beck", sixthBookOnTheList.getAuthor());
+		assertEquals(88.00, sixthBookOnTheList.getPrice());
 	}
 	
 	@Test
@@ -265,7 +260,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	public void testFindAllWithoutToken() throws JsonMappingException, JsonProcessingException {
 
 		RequestSpecification specificationWithoutToken = new RequestSpecBuilder()
-				.setBasePath("/api/person/v1").setPort(TestConfigs.SERVER_PORT)
+				.setBasePath("/api/book/v1").setPort(TestConfigs.SERVER_PORT)
 				.addFilter(new RequestLoggingFilter(LogDetail.ALL)).addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 				.build();
 		
@@ -284,11 +279,11 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.then().statusCode(403);
 	}
 	
-	private void mockPerson() {
-		person.setFirstName("Nelson");
-		person.setLastName("Piquet");
-		person.setAddress("Brasília - DF - Brasil");
-		person.setGender("Male");
+	private void mockBook() {
+		book.setTitle("Estruturas de dados e algoritmos com JavaScript");
+		book.setAuthor("Loiane Groner");
+		book.setLaunchDate(new Date());
+		book.setPrice(20.00);
 
 	}
 
