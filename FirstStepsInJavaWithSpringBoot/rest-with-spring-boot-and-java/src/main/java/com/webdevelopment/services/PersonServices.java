@@ -17,6 +17,8 @@ import com.webdevelopment.mapper.DozerMapper;
 import com.webdevelopment.model.entity.Person;
 import com.webdevelopment.repositories.PersonRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PersonServices {
 
@@ -81,6 +83,20 @@ public class PersonServices {
 
 		PersonVO personVO = DozerMapper.parseObject(personUpdated, PersonVO.class);
 		personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
+		return personVO;
+	}
+	
+	@Transactional
+	public PersonVO disablePerson(Long id) {
+		logger.info("Disabling one person");
+		
+		repository.disablePerson(id);
+		
+		Person person = repository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+
+		PersonVO personVO = DozerMapper.parseObject(person, PersonVO.class);
+		personVO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
 		return personVO;
 	}
 
