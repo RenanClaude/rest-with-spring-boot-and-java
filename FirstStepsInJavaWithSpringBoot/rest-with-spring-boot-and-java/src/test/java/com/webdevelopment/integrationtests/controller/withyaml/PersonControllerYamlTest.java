@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +22,7 @@ import com.webdevelopment.integrationtests.controller.withyaml.mapper.YmlMapper;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.webdevelopment.integrationtests.vo.AccountCredentialsVO;
 import com.webdevelopment.integrationtests.vo.PersonVO;
+import com.webdevelopment.integrationtests.vo.wrappers.WrapperPersonVO;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -253,7 +253,7 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	@Order(6)
 	public void testFindAll() throws JsonMappingException, JsonProcessingException {
 
-		var content = given()
+		var wrapper = given()
 				.spec(specification)
 				.config(
 	                    RestAssuredConfig
@@ -266,9 +266,9 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.accept(TestConfigs.CONTENT_TYPE_YML)
 				.when().get()
 				.then().statusCode(200).extract().body()
-				.as(PersonVO[].class, objectMapper);
+				.as(WrapperPersonVO.class, objectMapper);
 		
-		List<PersonVO> people = Arrays.asList(content);
+		List<PersonVO> people = wrapper.getEmbedded().getPeople();
 
 		PersonVO firstPersonOnTheList = people.get(0);
 

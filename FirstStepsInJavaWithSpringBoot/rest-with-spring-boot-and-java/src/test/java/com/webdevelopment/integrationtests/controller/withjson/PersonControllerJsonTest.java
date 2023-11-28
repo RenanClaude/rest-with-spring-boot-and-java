@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +23,7 @@ import com.webdevelopment.data.vo.v1.security.TokenVO;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.webdevelopment.integrationtests.vo.AccountCredentialsVO;
 import com.webdevelopment.integrationtests.vo.PersonVO;
+import com.webdevelopment.integrationtests.vo.wrappers.WrapperPersonVO;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -210,12 +210,16 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		var content = given()
 				.spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+//				.queryParam("page", 3, "size", 10, "direction", "asc")
+				.queryParam("page", 3)
+				.queryParam("size", 10)
+				.queryParam("direction", "asc")
 				.when().get()
 				.then().statusCode(200).extract().body()
 				.asString();
-//				.as(new TypeRef<List<PersonVO>>() {});
 		
-		List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {});
+		WrapperPersonVO wrapper = objectMapper.readValue(content, WrapperPersonVO.class);
+		List<PersonVO> people = wrapper.getEmbedded().getPeople();
 
 		PersonVO firstPersonOnTheList = people.get(0);
 
@@ -227,12 +231,12 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		
 		assertTrue(firstPersonOnTheList.getEnabled());
 
-		assertEquals(1, firstPersonOnTheList.getId());
+		assertEquals(658, firstPersonOnTheList.getId());
 
-		assertEquals("Ayrton", firstPersonOnTheList.getFirstName());
-		assertEquals("Senna", firstPersonOnTheList.getLastName());
-		assertEquals("São Paulo", firstPersonOnTheList.getAddress());
-		assertEquals("Male", firstPersonOnTheList.getGender());
+		assertEquals("Amil", firstPersonOnTheList.getFirstName());
+		assertEquals("Boteman", firstPersonOnTheList.getLastName());
+		assertEquals("12 Meadow Vale Hill", firstPersonOnTheList.getAddress());
+		assertEquals("Female", firstPersonOnTheList.getGender());
 		
 		PersonVO sixthPersonOnTheList = people.get(5);
 
@@ -242,13 +246,13 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertNotNull(sixthPersonOnTheList.getAddress());
 		assertNotNull(sixthPersonOnTheList.getGender());
 		
-		assertTrue(sixthPersonOnTheList.getEnabled());
+		assertFalse(sixthPersonOnTheList.getEnabled());
 
-		assertEquals(9, sixthPersonOnTheList.getId());
+		assertEquals(989, sixthPersonOnTheList.getId());
 
-		assertEquals("Nelson", sixthPersonOnTheList.getFirstName());
-		assertEquals("Mvezo", sixthPersonOnTheList.getLastName());
-		assertEquals("Mvezo – South Africa", sixthPersonOnTheList.getAddress());
+		assertEquals("Andrey", sixthPersonOnTheList.getFirstName());
+		assertEquals("Wipper", sixthPersonOnTheList.getLastName());
+		assertEquals("7 Sloan Road", sixthPersonOnTheList.getAddress());
 		assertEquals("Male", sixthPersonOnTheList.getGender());
 	}
 	

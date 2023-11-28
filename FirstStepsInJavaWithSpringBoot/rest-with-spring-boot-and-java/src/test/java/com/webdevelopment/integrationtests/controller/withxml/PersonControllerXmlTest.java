@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -24,6 +23,7 @@ import com.webdevelopment.data.vo.v1.security.TokenVO;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.webdevelopment.integrationtests.vo.AccountCredentialsVO;
 import com.webdevelopment.integrationtests.vo.PersonVO;
+import com.webdevelopment.integrationtests.vo.wrappers.WrapperPersonVO;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -221,9 +221,9 @@ public class PersonControllerXmlTest extends AbstractIntegrationTest {
 				.when().get()
 				.then().statusCode(200).extract().body()
 				.asString();
-//				.as(new TypeRef<List<PersonVO>>() {});
 		
-		List<PersonVO> people = objectMapper.readValue(content, new TypeReference<List<PersonVO>>() {});
+		WrapperPersonVO wrapper = objectMapper.readValue(content, WrapperPersonVO.class);
+		List<PersonVO> people = wrapper.getEmbedded().getPeople();
 
 		PersonVO firstPersonOnTheList = people.get(0);
 
