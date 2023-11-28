@@ -8,6 +8,10 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import com.webdevelopment.controllers.PersonController;
@@ -24,10 +28,14 @@ import jakarta.transaction.Transactional;
 public class PersonServices {
 
 	private PersonRepository repository;
+	private PagedResourcesAssembler<PersonVO> assembler;
 
 	@Autowired
-	public PersonServices(PersonRepository personRepository) {
+	public PersonServices(
+			PersonRepository personRepository, PagedResourcesAssembler<PersonVO> assembler
+			) {
 		this.repository = personRepository;
+		this.assembler = assembler;
 	}
 
 //	private final AtomicLong counter = new AtomicLong();
@@ -43,7 +51,7 @@ public class PersonServices {
 		return personVO;
 	}
 
-	public Page<PersonVO> findAll(Pageable pageable) {
+	public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) {
 		logger.info("Finding all people");
 		
 		Page<Person> personPage = repository.findAll(pageable);
@@ -52,8 +60,10 @@ public class PersonServices {
 		
 		personVOsPage.stream().forEach(
 				person -> person.add(linkTo(methodOn(PersonController.class).findById(person.getKey())).withSelfRel()));
+		
+		Link link = linkTo(methodOn(PersonController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
 
-		return personVOsPage;
+		return this.assembler.toModel(personVOsPage, link);
 	}
 
 	public PersonVO create(PersonVO personVO) {
