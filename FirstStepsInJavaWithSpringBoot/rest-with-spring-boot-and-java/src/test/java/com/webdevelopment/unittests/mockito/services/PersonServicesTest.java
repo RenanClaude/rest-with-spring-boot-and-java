@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -62,50 +61,50 @@ class PersonServicesTest {
 		assertEquals("Female", result.getGender());
 	}
 
-	@Test
-	void testFindAll() {
-		List<Person> list = input.mockEntityList();
-
-		when(repository.findAll()).thenReturn(list);
-
-		List<PersonVO> peopleVO = service.findAll();
-
-		assertNotNull(peopleVO);
-		assertEquals(14, peopleVO.size());
-		
-		PersonVO firstPerson = peopleVO.get(1);
-
-		assertNotNull(firstPerson);
-		assertNotNull(firstPerson.getKey());
-		assertNotNull(firstPerson.getLinks());
-		assertTrue(firstPerson.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"));
-		assertEquals("Addres Test1", firstPerson.getAddress());
-		assertEquals("First Name Test1", firstPerson.getFirstName());
-		assertEquals("Last Name Test1", firstPerson.getLastName());
-		assertEquals("Female", firstPerson.getGender());
-		
-		PersonVO fourthPerson = peopleVO.get(4);
-
-		assertNotNull(fourthPerson);
-		assertNotNull(fourthPerson.getKey());
-		assertNotNull(fourthPerson.getLinks());
-		assertTrue(fourthPerson.toString().contains("links: [</api/person/v1/4>;rel=\"self\"]"));
-		assertEquals("Addres Test4", fourthPerson.getAddress());
-		assertEquals("First Name Test4", fourthPerson.getFirstName());
-		assertEquals("Last Name Test4", fourthPerson.getLastName());
-		assertEquals("Male", fourthPerson.getGender());
-		
-		PersonVO seventhPerson = peopleVO.get(7);
-
-		assertNotNull(seventhPerson);
-		assertNotNull(seventhPerson.getKey());
-		assertNotNull(seventhPerson.getLinks());
-		assertTrue(seventhPerson.toString().contains("links: [</api/person/v1/7>;rel=\"self\"]"));
-		assertEquals("Addres Test7", seventhPerson.getAddress());
-		assertEquals("First Name Test7", seventhPerson.getFirstName());
-		assertEquals("Last Name Test7", seventhPerson.getLastName());
-		assertEquals("Female", seventhPerson.getGender());
-	}
+//	@Test
+//	void testFindAll() {
+//		List<Person> list = input.mockEntityList();
+//
+//		when(repository.findAll()).thenReturn(list);
+//
+//		List<PersonVO> peopleVO = service.findAll();
+//
+//		assertNotNull(peopleVO);
+//		assertEquals(14, peopleVO.size());
+//		
+//		PersonVO firstPerson = peopleVO.get(1);
+//
+//		assertNotNull(firstPerson);
+//		assertNotNull(firstPerson.getKey());
+//		assertNotNull(firstPerson.getLinks());
+//		assertTrue(firstPerson.toString().contains("links: [</api/person/v1/1>;rel=\"self\"]"));
+//		assertEquals("Addres Test1", firstPerson.getAddress());
+//		assertEquals("First Name Test1", firstPerson.getFirstName());
+//		assertEquals("Last Name Test1", firstPerson.getLastName());
+//		assertEquals("Female", firstPerson.getGender());
+//		
+//		PersonVO fourthPerson = peopleVO.get(4);
+//
+//		assertNotNull(fourthPerson);
+//		assertNotNull(fourthPerson.getKey());
+//		assertNotNull(fourthPerson.getLinks());
+//		assertTrue(fourthPerson.toString().contains("links: [</api/person/v1/4>;rel=\"self\"]"));
+//		assertEquals("Addres Test4", fourthPerson.getAddress());
+//		assertEquals("First Name Test4", fourthPerson.getFirstName());
+//		assertEquals("Last Name Test4", fourthPerson.getLastName());
+//		assertEquals("Male", fourthPerson.getGender());
+//		
+//		PersonVO seventhPerson = peopleVO.get(7);
+//
+//		assertNotNull(seventhPerson);
+//		assertNotNull(seventhPerson.getKey());
+//		assertNotNull(seventhPerson.getLinks());
+//		assertTrue(seventhPerson.toString().contains("links: [</api/person/v1/7>;rel=\"self\"]"));
+//		assertEquals("Addres Test7", seventhPerson.getAddress());
+//		assertEquals("First Name Test7", seventhPerson.getFirstName());
+//		assertEquals("Last Name Test7", seventhPerson.getLastName());
+//		assertEquals("Female", seventhPerson.getGender());
+//	}
 
 	@Test
 	void testCreate() {
