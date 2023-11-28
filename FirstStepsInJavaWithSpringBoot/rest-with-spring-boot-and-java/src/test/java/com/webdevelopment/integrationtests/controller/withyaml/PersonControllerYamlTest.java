@@ -21,8 +21,8 @@ import com.webdevelopment.data.vo.v1.security.TokenVO;
 import com.webdevelopment.integrationtests.controller.withyaml.mapper.YmlMapper;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.webdevelopment.integrationtests.vo.AccountCredentialsVO;
+import com.webdevelopment.integrationtests.vo.PagedModelPerson;
 import com.webdevelopment.integrationtests.vo.PersonVO;
-import com.webdevelopment.integrationtests.vo.wrappers.WrapperPersonVO;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -264,11 +264,14 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 	                                ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParam("page", 3)
+				.queryParam("size", 10)
+				.queryParam("direction", "asc")
 				.when().get()
 				.then().statusCode(200).extract().body()
-				.as(WrapperPersonVO.class, objectMapper);
+				.as(PagedModelPerson.class, objectMapper);
 		
-		List<PersonVO> people = wrapper.getEmbedded().getPeople();
+		List<PersonVO> people = wrapper.getContent();
 
 		PersonVO firstPersonOnTheList = people.get(0);
 
@@ -280,12 +283,12 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		
 		assertTrue(firstPersonOnTheList.getEnabled());
 
-		assertEquals(1, firstPersonOnTheList.getId());
+		assertEquals(658, firstPersonOnTheList.getId());
 
-		assertEquals("Ayrton", firstPersonOnTheList.getFirstName());
-		assertEquals("Senna", firstPersonOnTheList.getLastName());
-		assertEquals("São Paulo", firstPersonOnTheList.getAddress());
-		assertEquals("Male", firstPersonOnTheList.getGender());
+		assertEquals("Amil", firstPersonOnTheList.getFirstName());
+		assertEquals("Boteman", firstPersonOnTheList.getLastName());
+		assertEquals("12 Meadow Vale Hill", firstPersonOnTheList.getAddress());
+		assertEquals("Female", firstPersonOnTheList.getGender());
 		
 		PersonVO sixthPersonOnTheList = people.get(5);
 
@@ -295,13 +298,13 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(sixthPersonOnTheList.getAddress());
 		assertNotNull(sixthPersonOnTheList.getGender());
 		
-		assertTrue(sixthPersonOnTheList.getEnabled());
+		assertFalse(sixthPersonOnTheList.getEnabled());
 
-		assertEquals(9, sixthPersonOnTheList.getId());
+		assertEquals(989, sixthPersonOnTheList.getId());
 
-		assertEquals("Nelson", sixthPersonOnTheList.getFirstName());
-		assertEquals("Mvezo", sixthPersonOnTheList.getLastName());
-		assertEquals("Mvezo – South Africa", sixthPersonOnTheList.getAddress());
+		assertEquals("Andrey", sixthPersonOnTheList.getFirstName());
+		assertEquals("Wipper", sixthPersonOnTheList.getLastName());
+		assertEquals("7 Sloan Road", sixthPersonOnTheList.getAddress());
 		assertEquals("Male", sixthPersonOnTheList.getGender());
 	}
 	
