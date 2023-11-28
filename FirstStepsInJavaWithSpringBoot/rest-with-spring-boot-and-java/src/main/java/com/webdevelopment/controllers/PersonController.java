@@ -87,7 +87,6 @@ public class PersonController {
 		PagedModel<EntityModel<PersonVO>> persons = this.personServices.findAll(pageable);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(persons);
-
 	}
 
 	@CrossOrigin(origins = {"http://localhost:8080", "http://erudito.com.br"})

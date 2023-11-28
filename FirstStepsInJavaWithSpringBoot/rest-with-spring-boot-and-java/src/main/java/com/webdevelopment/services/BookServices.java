@@ -3,10 +3,15 @@ package com.webdevelopment.services;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 import com.webdevelopment.controllers.BookController;
@@ -21,10 +26,12 @@ import com.webdevelopment.repositories.BookRepository;
 public class BookServices {
 
 	private BookRepository repository;
+	private PagedResourcesAssembler<BookVO> assembler;
 
 	@Autowired
-	public BookServices(BookRepository personRepository) {
+	public BookServices(BookRepository personRepository, PagedResourcesAssembler<BookVO> assembler) {
 		this.repository = personRepository;
+		this.assembler = assembler;
 	}
 
 //	private final AtomicLong counter = new AtomicLong();
@@ -40,14 +47,19 @@ public class BookServices {
 		return bookVO;
 	}
 
-	public List<BookVO> findAll() {
+	public PagedModel<EntityModel<BookVO>> findAll(Pageable pageable) {
 		logger.info("Finding all books");
-		List<BookVO> booksVO = DozerMapper.parseListObjects(repository.findAll(), BookVO.class);
-
-		booksVO.stream().forEach(
+		
+		Page<Book> bookPage = this.repository.findAll(pageable);
+		
+		Page<BookVO> bookVOsPage = bookPage.map(book -> DozerMapper.parseObject(book, BookVO.class));
+		
+		bookVOsPage.stream().forEach(
 				book -> book.add(linkTo(methodOn(BookController.class).findById(book.getKey())).withSelfRel()));
 
-		return booksVO;
+		Link link = linkTo(methodOn(BookController.class).findAll(pageable.getPageNumber(), pageable.getPageSize(), "asc")).withSelfRel();
+		
+		return this.assembler.toModel(bookVOsPage, link);
 	}
 
 	public BookVO create(BookVO bookVO) {
