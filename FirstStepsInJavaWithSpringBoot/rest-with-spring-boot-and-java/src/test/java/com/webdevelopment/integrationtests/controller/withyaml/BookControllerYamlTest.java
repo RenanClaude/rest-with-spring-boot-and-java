@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +22,7 @@ import com.webdevelopment.integrationtests.controller.withyaml.mapper.YmlMapper;
 import com.webdevelopment.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.webdevelopment.integrationtests.vo.AccountCredentialsVO;
 import com.webdevelopment.integrationtests.vo.BookVO;
+import com.webdevelopment.integrationtests.vo.PagedModelBook;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.EncoderConfig;
@@ -209,7 +209,7 @@ public class BookControllerYamlTest extends AbstractIntegrationTest {
 	@Order(5)
 	public void testFindAll() throws JsonMappingException, JsonProcessingException {
 
-		var content = given()
+		var wrapper = given()
 				.spec(specification)
 				.config(
 	                    RestAssuredConfig
@@ -220,11 +220,14 @@ public class BookControllerYamlTest extends AbstractIntegrationTest {
 	                                ContentType.TEXT)))
 				.contentType(TestConfigs.CONTENT_TYPE_YML)
 				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParam("page", 0)
+				.queryParam("size", 5)
+				.queryParam("direction", "asc")
 				.when().get()
 				.then().statusCode(200).extract().body()
-				.as(BookVO[].class, objectMapper);
+				.as(PagedModelBook.class, objectMapper);
 		
-		List<BookVO> books = Arrays.asList(content);
+		List<BookVO> books = wrapper.getContent();
 
 		BookVO firstBookOnTheList = books.get(0);
 
@@ -234,25 +237,25 @@ public class BookControllerYamlTest extends AbstractIntegrationTest {
 		assertNotNull(firstBookOnTheList.getLaunchDate());
 		assertNotNull(firstBookOnTheList.getPrice());
 
-		assertEquals(1, firstBookOnTheList.getId());
+		assertEquals(12, firstBookOnTheList.getId());
 
-		assertEquals("Working effectively with legacy code", firstBookOnTheList.getTitle());
-		assertEquals("Michael C. Feathers", firstBookOnTheList.getAuthor());
-		assertEquals(49.00, firstBookOnTheList.getPrice());
+		assertEquals("Big Data: como extrair volume, variedade, velocidade e valor da avalanche de informação cotidiana", firstBookOnTheList.getTitle());
+		assertEquals("Viktor Mayer-Schonberger e Kenneth Kukier", firstBookOnTheList.getAuthor());
+		assertEquals(54.00, firstBookOnTheList.getPrice());
 		
-		BookVO sixthBookOnTheList = books.get(5);
+		BookVO fourthBookOnTheList = books.get(3);
 
-		assertNotNull(sixthBookOnTheList.getId());
-		assertNotNull(sixthBookOnTheList.getTitle());
-		assertNotNull(sixthBookOnTheList.getAuthor());
-		assertNotNull(sixthBookOnTheList.getLaunchDate());
-		assertNotNull(sixthBookOnTheList.getPrice());
+		assertNotNull(fourthBookOnTheList.getId());
+		assertNotNull(fourthBookOnTheList.getTitle());
+		assertNotNull(fourthBookOnTheList.getAuthor());
+		assertNotNull(fourthBookOnTheList.getLaunchDate());
+		assertNotNull(fourthBookOnTheList.getPrice());
 
-		assertEquals(6, sixthBookOnTheList.getId());
+		assertEquals(2, fourthBookOnTheList.getId());
 
-		assertEquals("Refactoring", sixthBookOnTheList.getTitle());
-		assertEquals("Martin Fowler e Kent Beck", sixthBookOnTheList.getAuthor());
-		assertEquals(88.00, sixthBookOnTheList.getPrice());
+		assertEquals("Design Patterns", fourthBookOnTheList.getTitle());
+		assertEquals("Ralph Johnson, Erich Gamma, John Vlissides e Richard Helm", fourthBookOnTheList.getAuthor());
+		assertEquals(45.00, fourthBookOnTheList.getPrice());
 	}
 	
 	@Test
