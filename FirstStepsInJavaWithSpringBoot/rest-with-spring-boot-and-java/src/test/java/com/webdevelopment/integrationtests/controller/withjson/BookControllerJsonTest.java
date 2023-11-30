@@ -229,6 +229,32 @@ public class BookControllerJsonTest extends AbstractIntegrationTest {
 				.then().statusCode(403);
 	}
 	
+	@Test
+	@Order(7)
+	public void testHATEOAS() throws JsonMappingException, JsonProcessingException {
+
+		var content = given()
+				.spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.queryParam("page", 1)
+				.queryParam("size", 4)
+				.queryParam("direction", "asc")
+				.when().get()
+				.then().statusCode(200).extract().body()
+				.asString();
+		
+		assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/book/v1/8\"}}}"));
+		assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/book/v1/11\"}}}"));
+		assertTrue(content.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/book/v1/7\"}}}"));
+		
+		assertTrue(content.contains("\"_links\":{\"first\":{\"href\":\"http://localhost:8888/api/book/v1?direction=asc&page=0&size=4&sort=title,asc\"}"));
+		assertTrue(content.contains("\"prev\":{\"href\":\"http://localhost:8888/api/book/v1?direction=asc&page=0&size=4&sort=title,asc\"}"));
+		assertTrue(content.contains("\"self\":{\"href\":\"http://localhost:8888/api/book/v1?page=1&size=4&direction=asc\"}"));
+		assertTrue(content.contains("\"next\":{\"href\":\"http://localhost:8888/api/book/v1?direction=asc&page=2&size=4&sort=title,asc\"}"));
+		assertTrue(content.contains("\"last\":{\"href\":\"http://localhost:8888/api/book/v1?direction=asc&page=3&size=4&sort=title,asc\"}}"));
+		assertTrue(content.contains("\"page\":{\"size\":4,\"totalElements\":15,\"totalPages\":4,\"number\":1}}"));
+	}
+	
 	private void mockBook() {
 		book.setTitle("Estruturas de dados e algoritmos com JavaScript");
 		book.setAuthor("Loiane Groner");
