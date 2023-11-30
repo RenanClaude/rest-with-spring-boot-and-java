@@ -375,6 +375,47 @@ public class PersonControllerYamlTest extends AbstractIntegrationTest {
 				.then().statusCode(403);
 	}
 	
+	@Test
+	@Order(9)
+	public void testHATEOAS() throws JsonMappingException, JsonProcessingException {
+
+		var content = given()
+				.spec(specification)
+				.config(
+	                    RestAssuredConfig
+	                        .config()
+	                        .encoderConfig(EncoderConfig.encoderConfig()
+	                            .encodeContentTypeAs(
+	                                TestConfigs.CONTENT_TYPE_YML,
+	                                ContentType.TEXT)))
+				.contentType(TestConfigs.CONTENT_TYPE_YML)
+				.accept(TestConfigs.CONTENT_TYPE_YML)
+				.queryParam("page", 3)
+				.queryParam("size", 10)
+				.queryParam("direction", "asc")
+				.when().get()
+				.then().statusCode(200).extract().body()
+				.asString();
+		
+		assertTrue(content.contains("- rel: \"first\"\n"
+				+ "  href: \"http://localhost:8888/api/person/v1?direction=asc&page=0&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("- rel: \"prev\"\n"
+				+ "  href: \"http://localhost:8888/api/person/v1?direction=asc&page=2&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("- rel: \"self\"\n"
+				+ "  href: \"http://localhost:8888/api/person/v1?page=3&size=10&direction=asc\""));
+		assertTrue(content.contains("- rel: \"next\"\n"
+				+ "  href: \"http://localhost:8888/api/person/v1?direction=asc&page=4&size=10&sort=firstName,asc\""));
+		assertTrue(content.contains("- rel: \"last\"\n"
+				+ "  href: \"http://localhost:8888/api/person/v1?direction=asc&page=100&size=10&sort=firstName,asc\""));
+		
+		assertTrue(content.contains("- rel: \"self\"\n"
+				+ "    href: \"http://localhost:8888/api/person/v1/658\""));
+		assertTrue(content.contains("- rel: \"self\"\n"
+				+ "    href: \"http://localhost:8888/api/person/v1/102\""));
+		assertTrue(content.contains("- rel: \"self\"\n"
+				+ "    href: \"http://localhost:8888/api/person/v1/440\""));
+	}
+	
 	private void mockPerson() {
 		person.setFirstName("Nelson");
 		person.setLastName("Piquet");
