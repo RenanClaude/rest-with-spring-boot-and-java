@@ -128,6 +128,12 @@ public class PersonControllerCorsJsonTest extends AbstractIntegrationTest {
 		assertEquals("Stallman", persistedPerson.getLastName());
 		assertEquals("New York - US", persistedPerson.getAddress());
 		assertEquals("Male", persistedPerson.getGender());
+		
+		given()
+		.spec(specification)
+		.contentType(TestConfigs.CONTENT_TYPE_JSON)
+		.pathParam("id", person.getId()).when()
+		.delete("{id}").then().statusCode(204);
 	}
 
 	@Test
