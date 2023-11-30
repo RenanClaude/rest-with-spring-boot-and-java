@@ -3,7 +3,7 @@ server:
 cors:
   originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br,https://erudito.com.br
 file:
-  upload-dir: /home/renan/Estudos/udemy-courses/uploadDir
+  upload-dir: ../../../../Estudos/udemy-courses/uploadDir
 security: 
   jwt:
     token:
