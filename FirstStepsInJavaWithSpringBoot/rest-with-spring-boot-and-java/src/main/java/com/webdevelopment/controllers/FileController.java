@@ -6,6 +6,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +23,7 @@ import com.webdevelopment.data.vo.v1.UploadFileResponseVO;
 import com.webdevelopment.services.FileStorageServices;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Tag(name = "File Endpoint")
 @RestController
@@ -35,11 +42,11 @@ public class FileController {
 	public UploadFileResponseVO uploadFile(@RequestParam("file") MultipartFile file) {
 		logger.info("Storing file to disk");
 
-		var filename = this.service.storeFile(file);
+		var fileName = this.service.storeFile(file);
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("api/file/v1/downloadFile/")
-				.path(filename).toUriString();
+				.path(fileName).toUriString();
 
-		return new UploadFileResponseVO(filename, fileDownloadUri, file.getContentType(), file.getSize());
+		return new UploadFileResponseVO(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 	}
 
 	@PostMapping("/uploadMultipleFiles")
@@ -47,6 +54,25 @@ public class FileController {
 		logger.info("Storing files to disk");
 
 		return Arrays.asList(files).stream().map(file -> uploadFile(file)).collect(Collectors.toList());
+	}
+	
+	@GetMapping("/downloadFile/{fileName:.+}")
+	public ResponseEntity<Resource> downloadFile(@PathVariable("fileName") String fileName, HttpServletRequest request) {
+		logger.info("Reading a file on disk");
+		
+		Resource resource = this.service.loadFileAsResource(fileName);
+		String contentType = "";
+		
+		try {
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+			
+		} catch (Exception e) {
+			logger.info("Could not determine file type!");
+		}
+		
+		if (contentType.isBlank()) contentType = "application/octet-stream";
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; fileName=\"" + resource.getFilename() + "\"").body(resource);
 	}
 
 }
