@@ -3,7 +3,7 @@ server:
 cors:
   originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br,https://erudito.com.br
 file:
-  upload-dir: ../../../../Estudos/udemy-courses/uploadDir
+  upload-dir: home/runner/work/rest-with-spring-boot-and-java/uploadDir
 security: 
   jwt:
     token:
