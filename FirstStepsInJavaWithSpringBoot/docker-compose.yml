@@ -19,7 +19,7 @@ services:
     networks:
       - webdevelopment-network
   rest-with-spring-boot-udemy:
-    image: leandrocgsi/rest-with-spring-boot-erudio
+    image: renanc/rest-with-spring-boot
     #image: eclipse-temurin:17-jdk-alpine
     restart: always
     build: ./rest-with-spring-boot-and-java
