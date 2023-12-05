@@ -1,3 +1,5 @@
+server:
+  port: 8080
 cors:
   originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br,https://erudito.com.br
 file:
