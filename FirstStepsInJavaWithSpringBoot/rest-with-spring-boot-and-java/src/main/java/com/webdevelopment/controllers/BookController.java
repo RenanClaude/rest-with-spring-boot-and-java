@@ -136,7 +136,6 @@ public class BookController {
 		this.service.delete(id);
 
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
 	}
 
 }
