@@ -1,7 +1,7 @@
 server:
-  port: 81
+  port: 8080
 cors:
-  originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br,https://erudito.com.br
+  originPatterns: http://localhost:3000,http://localhost:8080,http://erudito.com.br,http://localhost:81,https://erudito.com.br
 file:
   upload-dir: ../../../../Estudos/udemy-courses/uploadDir
 security: 
