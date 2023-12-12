@@ -31,7 +31,7 @@ jobs:
       
     - name: Testing Application
       working-directory: ./FirstStepsInJavaWithSpringBoot/rest-with-spring-boot-and-java
-      run: mvn clean test
+      run: mvn test
 
     - name: Docker Compose Build
       working-directory: ./FirstStepsInJavaWithSpringBoot
