@@ -28,6 +28,10 @@ jobs:
     - name: Build Application JAR
       working-directory: ./FirstStepsInJavaWithSpringBoot/rest-with-spring-boot-and-java
       run: mvn clean package
+      
+    - name: Testing Application
+      working-directory: ./FirstStepsInJavaWithSpringBoot/rest-with-spring-boot-and-java
+      run: mvn clean test
 
     - name: Docker Compose Build
       working-directory: ./FirstStepsInJavaWithSpringBoot
