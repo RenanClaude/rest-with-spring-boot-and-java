@@ -10,13 +10,17 @@ A aplicação consiste em disponibilizar uma API RESTful capacitada para ter usu
 Obs: Atualmente o front-end disponibiliza tais funcionalidades de 'CRUD' (create, read, update, delete) apenas para livros, havendo também a possiblidade de login e logout.
 
 ## Layout web
+#### Tela de Login
 ![Tela de login](https://github.com/RenanClaude/assets/blob/main/rest-spring-boot-tela-de-login.png)
 
+#### Tela da lista de livros
 ![Tela da lista de livros](https://github.com/RenanClaude/assets/blob/main/rest-spring-boot-tela-de-livros.png)
 
-![Tela da lista de adicionar livro](https://github.com/RenanClaude/assets/blob/main/rest-spring-boot-tela-de-adicionar-livro.png)
+#### Tela de adicionar livro
+![Tela de adicionar livro](https://github.com/RenanClaude/assets/blob/main/rest-spring-boot-tela-de-adicionar-livro.png)
 
-![Tela da lista de atualizar livro](https://github.com/RenanClaude/assets/blob/main/rest-spring-boot-tela-de-atualizar-livro.png)
+#### Tela de atualizar livro
+![Tela de atualizar livro](https://github.com/RenanClaude/assets/blob/main/rest-spring-boot-tela-de-atualizar-livro.png)
 
 # Tecnologias utilizadas
 ## Back end
