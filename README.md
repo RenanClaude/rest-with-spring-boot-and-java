@@ -30,6 +30,7 @@ Obs: Atualmente o front-end disponibiliza apenas as funcionalidades de 'CRUD' (c
 - JPA / Hibernate
 - Spring Security
 - JWT
+- Bcrypt
 - HATEOAS
 - Dozer
 - Mockito
