@@ -88,4 +88,4 @@ npm start
 
 Renan Claude Grossl
 
-https://www.linkedin.com/in/renan-claude-dev/
+[Linkedin](https://www.linkedin.com/in/renan-claude-dev/)
