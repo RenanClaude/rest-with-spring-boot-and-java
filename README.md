@@ -6,7 +6,7 @@
 
 Rest with Spring Boot and Java é uma aplicação full stack web, com foco total no back-end, construída durante o curso [REST API's RESTFul do 0 à AWS c. Spring Boot 3 Java e Docker](https://www.udemy.com/course/restful-apis-do-0-a-nuvem-com-springboot-e-docker/) na plataforma Udemy.
 
-A aplicação consiste em disponibilizar uma API RESTful capacitada para ter usuários e acesso a registro de livros e de pessoas no banco de dados. As principais funcionalidades são Login/Logout, paginação, criar, ler/recuperar, atualizar e deletar registros de pessoas e de livros.
+A aplicação consiste em disponibilizar uma API RESTful capacitada para ter usuários e acesso a registro de livros e de pessoas no banco de dados. As principais funcionalidades são Login/Logout, paginação, criar, ler/recuperar, atualizar e deletar registros de pessoas e de livros. <br/>
 Obs: Atualmente o front-end disponibiliza tais funcionalidades de 'CRUD' (create, read, update, delete) apenas para livros, havendo também a possiblidade de login e logout.
 
 ## Layout web
