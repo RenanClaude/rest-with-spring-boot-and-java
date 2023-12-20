@@ -1,6 +1,10 @@
 package com.webdevelopment.data.vo.v1;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -26,7 +30,8 @@ public class BookVO extends RepresentationModel<BookVO> implements Serializable 
 	public BookVO() {
 	}
 
-	public BookVO(Long key, String title, String author, Date launchDate, Double price) {
+	public BookVO(Long key, String title, String author, Date launchDate, Double price)
+			throws ParseException {
 		this.key = key;
 		this.title = title;
 		this.author = author;
@@ -63,7 +68,10 @@ public class BookVO extends RepresentationModel<BookVO> implements Serializable 
 	}
 
 	public void setLaunchDate(Date launchDate) {
-		this.launchDate = launchDate;
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(launchDate);
+		cal.add(Calendar.HOUR, 3);
+    this.launchDate = cal.getTime();
 	}
 
 	public Double getPrice() {
